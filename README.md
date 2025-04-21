@@ -17,6 +17,3 @@ Clone the repository:
    ```bash
    git clone https://github.com/eswarsamanthula/js-calculator.git
    cd js-calculator
-
-
-Let me know if you'd also like to include a folder structure preview or screenshots!

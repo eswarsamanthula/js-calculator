@@ -13,7 +13,10 @@ A simple and responsive calculator built using HTML, CSS, and JavaScript.
 
 ## 🛠️ Installation
 
-```bash
-git clone https://github.com/eswarsamanthula/js-calculator.git
-cd js-calculator
-open index.html
+Clone the repository:
+   ```bash
+   git clone https://github.com/eswarsamanthula/js-calculator.git
+   cd js-calculator
+
+
+Let me know if you'd also like to include a folder structure preview or screenshots!

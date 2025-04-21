@@ -12,6 +12,10 @@ A simple JavaScript calculator built using HTML and JavaScript.
 
 2. Open `index.html` in your browser to use the calculator.
 
+## Live Demo
+You can try the live demo of the JS Calculator here: [Live Demo](https://eswarsamanthula.github.io/js-calculator/)
+
+
 ## Usage
 - Click the buttons on the interface to perform calculations.
 - Supports basic operations: `+`, `-`, `*`, `/`.

@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Advanced JavaScript Calculator</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- PWA Support -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#222222">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <!-- Math.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.min.js"></script>
 </head>
 <body>
   <div class="main-container">
@@ -32,51 +38,84 @@
       <div class="calculator">
         <div id="display" class="display">0</div>
         <div class="buttons">
-          <button onclick="clearDisplay()" class="clear">C</button>
-          <button onclick="backspace()" class="operator">⌫</button>
-          <button onclick="appendOperator('/')" class="operator">÷</button>
+          <button onclick="clearDisplay()" class="clear" title="Clear">C</button>
+          <button onclick="backspace()" class="operator" title="Backspace">⌫</button>
+          <button onclick="appendOperator('/')" class="operator" title="Divide">÷</button>
           <button onclick="appendNumber('7')">7</button>
           <button onclick="appendNumber('8')">8</button>
           <button onclick="appendNumber('9')">9</button>
-          <button onclick="appendOperator('*')" class="operator">×</button>
+          <button onclick="appendOperator('*')" class="operator" title="Multiply">×</button>
           <button onclick="appendNumber('4')">4</button>
           <button onclick="appendNumber('5')">5</button>
           <button onclick="appendNumber('6')">6</button>
-          <button onclick="appendOperator('-')" class="operator">−</button>
+          <button onclick="appendOperator('-')" class="operator" title="Subtract">−</button>
           <button onclick="appendNumber('1')">1</button>
           <button onclick="appendNumber('2')">2</button>
           <button onclick="appendNumber('3')">3</button>
-          <button onclick="appendOperator('+')" class="operator">+</button>
+          <button onclick="appendOperator('+')" class="operator" title="Add">+</button>
           <button onclick="appendNumber('0')">0</button>
           <button onclick="appendNumber('.')">.</button>
-          <button onclick="calculate()" class="equal">=</button>
+          <button onclick="calculate()" class="equal" title="Calculate">=</button>
         </div>
         
         <div class="scientific-buttons" id="scientificButtons">
-          <button onclick="calculateFunction('sqrt')">√</button>
-          <button onclick="calculateFunction('square')">x²</button>
-          <button onclick="calculateFunction('cube')">x³</button>
-          <button onclick="calculateFunction('1/x')">1/x</button>
-          <button onclick="calculateFunction('sin')">sin</button>
-          <button onclick="calculateFunction('cos')">cos</button>
-          <button onclick="calculateFunction('tan')">tan</button>
-          <button onclick="appendOperator('%')">%</button>
-          <button onclick="calculateFunction('log')">log</button>
-          <button onclick="calculateFunction('ln')">ln</button>
-          <button onclick="appendOperator('**')">^</button>
-          <button onclick="appendNumber('3.14159')">π</button>
+          <button onclick="calculateFunction('sqrt')" title="Square Root">√</button>
+          <button onclick="calculateFunction('square')" title="Square">x²</button>
+          <button onclick="calculateFunction('cube')" title="Cube">x³</button>
+          <button onclick="calculateFunction('1/x')" title="Reciprocal">1/x</button>
+          <button onclick="calculateFunction('sin')" title="Sine">sin</button>
+          <button onclick="calculateFunction('cos')" title="Cosine">cos</button>
+          <button onclick="calculateFunction('tan')" title="Tangent">tan</button>
+          <button onclick="appendOperator('%')" title="Percent">%</button>
+          <button onclick="calculateFunction('log')" title="Logarithm (base 10)">log</button>
+          <button onclick="calculateFunction('ln')" title="Natural Logarithm">ln</button>
+          <button onclick="appendOperator('^')" title="Power">x^y</button>
+          <button onclick="appendNumber('3.14159')" title="Pi">π</button>
         </div>
       </div>
 
       <div class="history-container">
-        <h2>History</h2>
-        <div id="historyList"></div>
-        <button onclick="clearHistory()" style="width: 100%; margin-top: 10px;">Clear History</button>
+        <div class="history-header">
+          <h2>History</h2>
+          <div class="history-actions">
+            <button onclick="exportHistory()" class="action-btn" title="Export History">
+              Export
+            </button>
+            <label for="importFile" class="action-btn" title="Import History">
+              Import
+            </label>
+            <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importHistory(event)">
+          </div>
+        </div>
+        
+        <div class="history-settings">
+          <label for="historyLimit">History items:</label>
+          <select id="historyLimit" onchange="setHistoryLimit(this.value)">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        
+        <div id="historyList" class="history-list"></div>
+        <button onclick="clearHistory()" class="clear-history-btn">Clear History</button>
       </div>
     </div>
   </div>
+
+  <!-- Service Worker Registration for PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('Service Worker registered'))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
+  </script>
   
-  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.min.js"></script>
   <script src="calculator.js"></script>
 </body>
 </html>

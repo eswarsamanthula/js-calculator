@@ -10,6 +10,7 @@ const scientificButtons = document.getElementById('scientificButtons');
 let currentInput = '';
 let calculationHistory = [];
 let lastResult = null;
+let maxHistoryItems = 10; // Default history limit
 
 // Load saved data
 function loadSavedData() {
@@ -22,6 +23,12 @@ function loadSavedData() {
   const isScientific = localStorage.getItem('scientificMode') === 'true';
   scientificToggle.checked = isScientific;
   toggleScientificMode(isScientific);
+  
+  // Load history limit preference
+  const savedHistoryLimit = localStorage.getItem('historyLimit');
+  if (savedHistoryLimit) {
+    maxHistoryItems = parseInt(savedHistoryLimit);
+  }
   
   // Load calculation history
   const savedHistory = localStorage.getItem('calculationHistory');
@@ -69,7 +76,7 @@ function appendNumber(number) {
 
 function appendOperator(operator) {
   const lastChar = currentInput.slice(-1);
-  if (['+', '-', '*', '/', '%', '**'].includes(lastChar)) {
+  if (['+', '-', '*', '/', '%', '^'].includes(lastChar)) {
     currentInput = currentInput.slice(0, -1) + operator;
   } else {
     currentInput += operator;
@@ -93,13 +100,13 @@ function calculate() {
   if (!currentInput) return;
   
   try {
-    // Save the expression for history
+    // Save the original expression for history
     const expression = currentInput;
     
-    // Replace % with /100 for percentage calculations
-    const processedInput = currentInput.replace(/%/g, '/100');
+    // Prepare input for math.js (replace ^ with ** for exponentiation)
+    const processedInput = currentInput.replace(/\^/g, '**');
     
-    // Evaluate the expression
+    // Safely evaluate using math.js instead of eval()
     const result = math.evaluate(processedInput).toString();
     
     // Update display and currentInput
@@ -112,6 +119,7 @@ function calculate() {
   } catch (e) {
     display.textContent = 'Error';
     currentInput = '';
+    console.error('Calculation error:', e);
   }
 }
 
@@ -126,15 +134,15 @@ function calculateFunction(func) {
 
     switch (func) {
       case 'sqrt':
-        result = Math.sqrt(number);
+        result = math.sqrt(number);
         expression = `√(${currentInput})`;
         break;
       case 'square':
-        result = number * number;
+        result = math.pow(number, 2);
         expression = `(${currentInput})²`;
         break;
       case 'cube':
-        result = number * number * number;
+        result = math.pow(number, 3);
         expression = `(${currentInput})³`;
         break;
       case '1/x':
@@ -142,23 +150,23 @@ function calculateFunction(func) {
         expression = `1/(${currentInput})`;
         break;
       case 'sin':
-        result = Math.sin(number);
+        result = math.sin(number);
         expression = `sin(${currentInput})`;
         break;
       case 'cos':
-        result = Math.cos(number);
+        result = math.cos(number);
         expression = `cos(${currentInput})`;
         break;
       case 'tan':
-        result = Math.tan(number);
+        result = math.tan(number);
         expression = `tan(${currentInput})`;
         break;
       case 'log':
-        result = Math.log10(number);
+        result = math.log10(number);
         expression = `log(${currentInput})`;
         break;
       case 'ln':
-        result = Math.log(number);
+        result = math.log(number);
         expression = `ln(${currentInput})`;
         break;
     }
@@ -171,13 +179,14 @@ function calculateFunction(func) {
   } catch (e) {
     display.textContent = 'Error';
     currentInput = '';
+    console.error('Scientific function error:', e);
   }
 }
 
 // History functions
 function addToHistory(expression, result) {
   calculationHistory.unshift({ expression, result });
-  if (calculationHistory.length > 10) {
+  if (calculationHistory.length > maxHistoryItems) {
     calculationHistory.pop();
   }
   updateHistoryDisplay();
@@ -186,7 +195,7 @@ function addToHistory(expression, result) {
 
 function updateHistoryDisplay() {
   historyList.innerHTML = '';
-  calculationHistory.forEach((item, index) => {
+  calculationHistory.forEach((item) => {
     const historyItem = document.createElement('div');
     historyItem.className = 'history-item';
     historyItem.innerHTML = `
@@ -209,6 +218,59 @@ function clearHistory() {
 
 function saveHistory() {
   localStorage.setItem('calculationHistory', JSON.stringify(calculationHistory));
+}
+
+// History import/export functions
+function exportHistory() {
+  const dataStr = JSON.stringify(calculationHistory);
+  const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  
+  const exportFileDefaultName = 'calculator-history.json';
+  
+  const linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+}
+
+function importHistory(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedHistory = JSON.parse(e.target.result);
+      if (Array.isArray(importedHistory)) {
+        calculationHistory = importedHistory.concat(calculationHistory);
+        // Limit to max history items
+        if (calculationHistory.length > maxHistoryItems) {
+          calculationHistory = calculationHistory.slice(0, maxHistoryItems);
+        }
+        updateHistoryDisplay();
+        saveHistory();
+        alert('History imported successfully!');
+      } else {
+        alert('Invalid history format.');
+      }
+    } catch (error) {
+      alert('Error importing history: ' + error.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Set history limit
+function setHistoryLimit(limit) {
+  maxHistoryItems = limit;
+  localStorage.setItem('historyLimit', limit);
+  
+  // Trim existing history if needed
+  if (calculationHistory.length > maxHistoryItems) {
+    calculationHistory = calculationHistory.slice(0, maxHistoryItems);
+    updateHistoryDisplay();
+    saveHistory();
+  }
 }
 
 // Keyboard support
@@ -242,9 +304,11 @@ document.addEventListener('keydown', function(event) {
   }
   // Power
   else if (key === '^') {
-    appendOperator('**');
+    appendOperator('^');
   }
 });
 
 // Initialize
-loadSavedData();
+document.addEventListener('DOMContentLoaded', function() {
+  loadSavedData();
+});

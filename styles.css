@@ -20,6 +20,11 @@
   --toggle-dot: #fff;
   --toggle-active: #2196F3;
   --shadow: rgba(0, 0, 0, 0.3);
+  --action-btn-bg: #2196F3;
+  --action-btn-text: #fff;
+  --tooltip-bg: rgba(0, 0, 0, 0.8);
+  --tooltip-text: #fff;
+  --transition-speed: 0.3s;
 }
 
 .dark-mode {
@@ -44,6 +49,17 @@
   --toggle-dot: #ddd;
   --toggle-active: #4dabf7;
   --shadow: rgba(0, 0, 0, 0.5);
+  --action-btn-bg: #4dabf7;
+  --action-btn-text: #fff;
+  --tooltip-bg: rgba(255, 255, 255, 0.9);
+  --tooltip-text: #000;
+}
+
+* {
+  box-sizing: border-box;
+  transition: background-color var(--transition-speed), 
+              color var(--transition-speed), 
+              border-color var(--transition-speed);
 }
 
 body {
@@ -56,7 +72,6 @@ body {
   margin: 0;
   padding: 20px;
   background-color: var(--bg-color);
-  transition: background-color 0.3s, color 0.3s;
   color: var(--history-text);
 }
 
@@ -112,7 +127,6 @@ body {
   border-radius: 5px;
   min-height: 30px;
   word-wrap: break-word;
-  transition: background 0.3s, color 0.3s;
 }
 
 .buttons {
@@ -136,7 +150,10 @@ button {
   cursor: pointer;
   background-color: var(--button-bg);
   color: var(--button-text);
-  transition: background 0.3s, color 0.3s, transform 0.1s;
+  transition: background-color var(--transition-speed), 
+              color var(--transition-speed), 
+              transform 0.1s;
+  position: relative;
 }
 
 button:active {
@@ -145,6 +162,29 @@ button:active {
 
 button:hover {
   filter: brightness(1.1);
+}
+
+button[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 10;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
 
 .operator {
@@ -168,13 +208,62 @@ button:hover {
   flex: 1;
   min-width: 280px;
   max-height: 500px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   background-color: var(--history-bg);
   color: var(--history-text);
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0px 0px 15px var(--shadow);
-  transition: background 0.3s, color 0.3s;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.history-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.history-settings {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.history-settings select {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid var(--history-border);
+  background-color: var(--display-bg);
+  color: var(--display-text);
+}
+
+.action-btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+}
+
+.action-btn:hover {
+  filter: brightness(1.1);
+}
+
+.history-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
 }
 
 .history-item {
@@ -196,6 +285,14 @@ button:hover {
 .history-result {
   font-size: 18px;
   margin-top: 4px;
+}
+
+.clear-history-btn {
+  padding: 8px;
+  width: 100%;
+  font-size: 14px;
+  background-color: var(--clear-bg);
+  color: var(--clear-text);
 }
 
 .switch {
@@ -256,5 +353,9 @@ input:checked + .slider:before {
   .toggle-container {
     width: 100%;
     justify-content: space-between;
+  }
+  
+  button[title]:hover::after {
+    display: none; /* Disable tooltips on mobile */
   }
 }

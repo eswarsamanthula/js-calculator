@@ -55,13 +55,18 @@ A simple, responsive, and interactive calculator built with **HTML**, **CSS**, a
 
 📦 js-calculator ┣ 📜 index.html ┣ 📜 style.css ┣ 📜 script.js ┣ 📁 screenshots/ ┃ ┣ 📸 calculator.png ┗ 📜 README.md
 
----
-
-## 🚀 Getting Started
-
 ### Clone the repository
 
 ```bash
 git clone https://github.com/eswarsamanthula/js-calculator.git
 cd js-calculator
+```
+## Run locally
+Open index.html in your browser to see the calculator in action — no setup required!
 
+## 🙌 Contributing
+Feel free to open issues or create pull requests if you have suggestions, fixes, or improvements.
+
+## 📬 Contact
+Created by Eswar Samanthula
+📧 Email: eswarsamanthulas@gmail.com

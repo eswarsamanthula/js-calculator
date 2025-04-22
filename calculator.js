@@ -100,7 +100,7 @@ function calculate() {
     const processedInput = currentInput.replace(/%/g, '/100');
     
     // Evaluate the expression
-    const result = eval(processedInput).toString();
+    const result = math.evaluate(processedInput).toString();
     
     // Update display and currentInput
     display.textContent = result;
